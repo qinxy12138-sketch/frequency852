@@ -4,7 +4,7 @@ on:
     branches: [main]
   workflow_dispatch:
 permissions:
-  contents: write
+  contents: read
   pages: write
   id-token: write
 concurrency:
@@ -17,27 +17,7 @@ jobs:
       name: github-pages
       url: ${{ steps.deployment.outputs.page_url }}
     steps:
-      - uses: actions/checkout@v4
-      - name: Import original media once
-        env:
-          MEDIA_FILES: '["map-title-cleanplate.png","blueprint.webp","festival-film-poster.jpg","social-transparent.png","token.webp","merch-postcards.png","social.webp","festival-film.mp4","livehouse.webp","brand-brown-waveform.png","poster-the-lyricist-wannabe.jpg","telephone-interior.png","work-sans.ttf","vintage-chairs.png","telephone.webp","audience-journey-original.png","merch-token.png","nunito.ttf","cassette.webp","nunito-license.txt","poster-song-of-the-exile.jpg","work-sans-license.txt","poster-comrades-almost-a-love-story.jpg","cinema.webp","journey.webp","postcard.webp","portrait.webp","cassette-transparent.png"]'
-        run: |
-          python3 - <<'PY'
-          import os, json, pathlib, urllib.request
-          root = pathlib.Path("assets")
-          root.mkdir(exist_ok=True)
-          for name in json.loads(os.environ["MEDIA_FILES"]):
-              path = root / name
-              if not path.exists():
-                  urllib.request.urlretrieve("https://frequency-852-xinyi.qinxy12138.chatgpt.site/assets/" + name, path)
-          PY
-          git config user.name "github-actions[bot]"
-          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
-          git add assets
-          if ! git diff --cached --quiet; then
-            git commit -m "Store original festival media [skip ci]"
-            git push
-          fi
+      - uses: actions/checkout@v5
       - uses: actions/configure-pages@v5
       - uses: actions/upload-pages-artifact@v3
         with:
